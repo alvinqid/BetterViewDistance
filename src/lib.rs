@@ -19,23 +19,13 @@ fn safe_setup() {
 
 fn main() {
     log::info!("the main function of the BetterViewDistance mod is called!");
-    while unsafe { !crate::preloader::pl_is_loaded() } {
-      std::thread::sleep(std::time::Duration::from_millis(50));
-    }
+    std::thread::sleep(std::time::Duration::from_millis(1000));
+    
     unsafe {
-      let dir_ptr = crate::preloader::pl_get_mods_dir();
+      let dir_ptr = crate::preloader::pl_get_minecraft_data_dir();
       if !dir_ptr.is_null() {
           let dir = CStr::from_ptr(dir_ptr as *const c_char).to_string_lossy();
           log::info!("Dir: {}", dir);
       }
     }
 }
-
-
-
-
-
-
-
-
-
