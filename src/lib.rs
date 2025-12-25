@@ -8,5 +8,6 @@ fn safe_setup() {
 }
 
 fn main() {
-    let _ = test::write_uuid_to_external_dir();
+    let _ = test::write_test_to_external_dir();
 }
+
