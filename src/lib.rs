@@ -18,8 +18,9 @@ fn safe_setup() {
 fn main() {
     log::info!("the main function of the BetterViewDistance mod is called!");
     let dir_ptr = crate::preloader::pl_get_externalFiles_dir();
-    log::info!("ExternalDir: {}", dir_ptr);
+    log::info!("ExternalDir: {}", CStr::from_ptr(dir_ptr).to_string_lossy());
 }
+
 
 
 
