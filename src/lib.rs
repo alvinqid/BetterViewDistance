@@ -1,4 +1,5 @@
 use std::ffi::CStr;
+use std::os::raw::c_char;
 mod preloader;
 
 pub fn setup_logging() {
@@ -18,10 +19,15 @@ fn safe_setup() {
 
 fn main() {
     log::info!("the main function of the BetterViewDistance mod is called!");
-    let dir_ptr = crate::preloader::pl_get_externalFiles_dir();
-    let dir = CStr::from_ptr(dir_ptr as *const u8).to_string_lossy();
-    log::info!("ExternalDir: {}", dir);
+    unsafe {
+      let dir_ptr = crate::preloader::pl_get_externalFiles_dir();
+      if !dir_ptr.is_null() {
+          let dir = CStr::from_ptr(dir_ptr as *const c_char).to_string_lossy();
+          log::info!("ExternalDir: {}", dir);
+      }
+    }
 }
+
 
 
 
