@@ -19,6 +19,9 @@ fn safe_setup() {
 
 fn main() {
     log::info!("the main function of the BetterViewDistance mod is called!");
+    while unsafe { !crate::preloader::pl_is_loaded() } {
+      std::thread::sleep(std::time::Duration::from_millis(50));
+    }
     unsafe {
       let dir_ptr = crate::preloader::pl_get_mods_dir();
       if !dir_ptr.is_null() {
@@ -27,6 +30,7 @@ fn main() {
       }
     }
 }
+
 
 
 
