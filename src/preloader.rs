@@ -13,11 +13,11 @@ extern "C" {
 
     pub fn pl_resolve_signature(signature: *const libc::c_char, module_name: *const libc::c_char) -> libc::uintptr_t;
 
-    pub fn pl_get_mods_dir() -> *const char;
+    pub fn pl_get_mods_dir() -> *const libc::c_char;
 
-    pub fn pl_get_cache_dir() -> *const char;
+    pub fn pl_get_cache_dir() -> *const libc::c_char;
   
-    pub fn pl_get_externalFiles_dir() -> *const char;
+    pub fn pl_get_externalFiles_dir() -> *const libc::c_char;
 }
 
 #[macro_export]
