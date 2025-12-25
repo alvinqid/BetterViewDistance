@@ -20,13 +20,14 @@ fn safe_setup() {
 fn main() {
     log::info!("the main function of the BetterViewDistance mod is called!");
     unsafe {
-      let dir_ptr = crate::preloader::pl_get_externalFiles_dir();
+      let dir_ptr = crate::preloader::pl_get_mods_dir();
       if !dir_ptr.is_null() {
           let dir = CStr::from_ptr(dir_ptr as *const c_char).to_string_lossy();
-          log::info!("ExternalDir: {}", dir);
+          log::info!("Dir: {}", dir);
       }
     }
 }
+
 
 
 
