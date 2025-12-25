@@ -1,3 +1,4 @@
+use std::ffi::CStr;
 mod preloader;
 
 pub fn setup_logging() {
@@ -20,6 +21,7 @@ fn main() {
     let dir_ptr = crate::preloader::pl_get_externalFiles_dir();
     log::info!("ExternalDir: {}", CStr::from_ptr(dir_ptr).to_string_lossy());
 }
+
 
 
 
