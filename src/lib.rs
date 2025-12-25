@@ -1,4 +1,3 @@
-mod test;
 mod preloader;
 
 pub fn setup_logging() {
@@ -21,5 +20,6 @@ fn main() {
     let dir_ptr = crate::preloader::pl_get_externalFiles_dir();
     log::info!("ExternalDir: {}", dir_ptr);
 }
+
 
 
