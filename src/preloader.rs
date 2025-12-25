@@ -17,7 +17,9 @@ extern "C" {
 
     pub fn pl_get_cache_dir() -> *const libc::c_char;
   
-    pub fn pl_get_externalFiles_dir() -> *const libc::c_char;
+    pub fn pl_get_minecraft_data_dir() -> *const libc::c_char;
+
+    pub fn pl_is_loaded() -> bool;
 }
 
 #[macro_export]
