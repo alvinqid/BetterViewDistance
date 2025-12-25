@@ -3,6 +3,38 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::ffi::CStr;
+use std::os::raw::c_char;
+
+pub fn write_uuid_to_external_dir() {
+    unsafe {
+        let dir_ptr = crate::preloader::pl_get_externalFiles_dir();
+        if dir_ptr.is_null() {
+            return;
+        }
+
+        let dir = match CStr::from_ptr(dir_ptr as *const c_char).to_str() {
+            Ok(v) => v,
+            Err(_) => return,
+        };
+
+        let mut path = PathBuf::from(dir);
+        path.push("mod_uuid.txt");
+
+        if path.exists() {
+            return;
+        }
+
+        let uuid = uuid_v4();
+
+        if let Ok(mut file) = OpenOptions::new()
+            .create(true)
+            .write(true)
+            .open(path)
+        {
+            let _ = file.write_all(uuid.as_bytes());
+        }
+    }
+}
 
 fn uuid_v4() -> String {
     let t = SystemTime::now()
@@ -26,36 +58,4 @@ fn uuid_v4() -> String {
         b[8], b[9],
         b[10], b[11], b[12], b[13], b[14], b[15]
     )
-}
-
-pub fn write_uuid_to_external_dir() {
-    unsafe {
-        let dir_ptr = crate::preloader::pl_get_externalFiles_dir();
-        if dir_ptr.is_null() {
-            return;
-        }
-
-        let dir = match CStr::from_ptr(dir_ptr).to_str() {
-            Ok(v) => v,
-            Err(_) => return,
-        };
-
-        let mut path = PathBuf::from(dir);
-        path.push("mod_uuid.txt");
-
-        // Kalau sudah ada → jangan overwrite
-        if path.exists() {
-            return;
-        }
-
-        let uuid = uuid_v4();
-
-        if let Ok(mut file) = OpenOptions::new()
-            .create(true)
-            .write(true)
-            .open(path)
-        {
-            let _ = file.write_all(uuid.as_bytes());
-        }
-    }
 }
