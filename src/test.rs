@@ -1,61 +1,64 @@
-use std::fs::OpenOptions;
+use std::fs::{OpenOptions, create_dir_all};
 use std::io::Write;
 use std::path::PathBuf;
-use std::time::{SystemTime, UNIX_EPOCH};
 use std::ffi::CStr;
 use std::os::raw::c_char;
+use std::ffi::CString;
 
-pub fn write_uuid_to_external_dir() {
+fn android_log(msg: &str) {
+    unsafe {
+        let tag = CString::new("RustMod").unwrap();
+        let msg = CString::new(msg).unwrap();
+        libc::__android_log_print(
+            libc::ANDROID_LOG_INFO,
+            tag.as_ptr(),
+            msg.as_ptr(),
+        );
+    }
+}
+
+pub fn write_test_to_external_dir() {
     unsafe {
         let dir_ptr = crate::preloader::pl_get_externalFiles_dir();
         if dir_ptr.is_null() {
+            android_log("externalFilesDir is NULL");
             return;
         }
 
         let dir = match CStr::from_ptr(dir_ptr as *const c_char).to_str() {
             Ok(v) => v,
-            Err(_) => return,
+            Err(_) => {
+                android_log("Failed to convert externalFilesDir to str");
+                return;
+            }
         };
 
-        let mut path = PathBuf::from(dir);
-        path.push("mod_uuid.txt");
+        let base = PathBuf::from(dir);
 
-        if path.exists() {
+        // Pastikan direktori ada
+        if let Err(e) = create_dir_all(&base) {
+            android_log(&format!("Failed to create dir: {:?}", e));
             return;
         }
 
-        let uuid = uuid_v4();
+        let mut path = base;
+        path.push("mod_test.txt");
 
-        if let Ok(mut file) = OpenOptions::new()
+        let content = "Test berhasil dari: mod BetterViewDistance\n";
+
+        match OpenOptions::new()
             .create(true)
             .write(true)
-            .open(path)
+            .truncate(true)
+            .open(&path)
         {
-            let _ = file.write_all(uuid.as_bytes());
+            Ok(mut file) => {
+                let _ = file.write_all(content.as_bytes());
+                android_log("File berhasil ditulis: mod_test.txt");
+            }
+            Err(e) => {
+                android_log(&format!("Gagal membuka file: {:?}", e));
+            }
         }
     }
-}
-
-fn uuid_v4() -> String {
-    let t = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-
-    let mut b = [0u8; 16];
-    for i in 0..16 {
-        b[i] = ((t >> (i * 8)) & 0xff) as u8;
-    }
-
-    b[6] = (b[6] & 0x0f) | 0x40; // version 4
-    b[8] = (b[8] & 0x3f) | 0x80; // variant
-
-    format!(
-        "{:02x}{:02x}{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}",
-        b[0], b[1], b[2], b[3],
-        b[4], b[5],
-        b[6], b[7],
-        b[8], b[9],
-        b[10], b[11], b[12], b[13], b[14], b[15]
-    )
 }
