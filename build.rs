@@ -1,6 +1,7 @@
 fn main() {
     println!("cargo:rerun-if-changed=src/lib.rs");
-    println!("cargo:rerun-if-changed=src/android.rs");
+    println!("cargo:rustc-link-search=native={}", "preloader");
+    println!("cargo:rustc-link-lib=preloader");
     
     // Set soname for shared library
     if std::env::var("TARGET").unwrap().contains("linux") {
@@ -14,3 +15,4 @@ fn main() {
     }
 
 }
+
