@@ -4,7 +4,7 @@ fn main() {
     
     // Set soname for shared library
     if std::env::var("TARGET").unwrap().contains("linux") {
-        println!("cargo:rustc-cdylib-link-arg=-Wl,-soname,libnoflipbookanim.so");
+        println!("cargo:rustc-cdylib-link-arg=-Wl,-soname,libbetterviewdistance.so");
     }
     
     // Android specific linking
@@ -12,4 +12,5 @@ fn main() {
         println!("cargo:rustc-link-lib=log");
         println!("cargo:rustc-link-lib=android");
     }
+
 }
