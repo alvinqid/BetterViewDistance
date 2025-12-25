@@ -2,6 +2,7 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
+use std::ffi::CStr;
 
 fn uuid_v4() -> String {
     let t = SystemTime::now()
